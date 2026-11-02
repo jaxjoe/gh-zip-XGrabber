@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Zip Grabber",
+  "version": "0.1.2",
+  "description": "GitHub 仓库页一键下载源码 zip；搜索结果多选批量排队；直连失败自动切镜像；按日期目录归档到下载文件夹",
+  "permissions": ["downloads", "storage", "alarms", "notifications", "sidePanel"],
+  "host_permissions": [
+    "https://github.com/*",
+    "https://codeload.github.com/*",
+    "https://api.github.com/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["content/scraper.js", "content/detector.js"],
+      "css": ["content/detector.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "GitHub Zip Grabber（打开侧边栏）"
+  },
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+G" },
+      "description": "打开/关闭侧边栏"
+    },
+    "download-current-repo": {
+      "suggested_key": { "default": "Alt+Shift+D" },
+      "description": "下载当前仓库源码 zip"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

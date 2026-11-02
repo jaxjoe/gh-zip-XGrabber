@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>GitHub Zip Grabber</title>
+  <link rel="stylesheet" href="./sidepanel.css">
+</head>
+<body>
+  <header class="bar">
+    <nav class="tabs" id="nav">
+      <button class="tab" data-view="repo">仓库</button>
+      <button class="tab" data-view="search">清单 <span class="count" id="nav-search-count">0</span></button>
+      <button class="tab" data-view="queue">队列 <span class="count" id="nav-queue-count">0</span></button>
+      <button class="tab" data-view="settings">设置</button>
+    </nav>
+    <div class="summary" id="summary">—</div>
+  </header>
+
+  <main>
+    <!-- 仓库 -->
+    <section class="view" id="view-repo" hidden>
+      <div id="repo-card"></div>
+      <p class="hint">默认分支由 <code>archive/HEAD.zip</code> 自动解析，不消耗 API 配额，也不受 master / main 命名差异影响。</p>
+    </section>
+
+    <!-- 搜索清单 -->
+    <section class="view" id="view-search" hidden>
+      <div class="toolbar">
+        <input type="search" id="flt" placeholder="按名称 / 描述过滤">
+        <select id="sort">
+          <option value="stars">按 star 降序</option>
+          <option value="updated">按更新时间</option>
+          <option value="name">按名称</option>
+          <option value="added">按抓取顺序</option>
+        </select>
+      </div>
+      <div class="toolbar">
+        <label class="chk"><input type="checkbox" id="sel-all"><span>全选</span></label>
+        <span class="grow"></span>
+        <button class="btn" id="btn-clear-collected" title="清空当前展示的这份收集清单（可能是其它标签页收集的）">清空收集</button>
+        <button class="btn primary" id="btn-download-selected">下载选中 (0)</button>
+      </div>
+      <div class="list" id="search-list"></div>
+      <p class="hint" id="search-empty">在 GitHub 搜索结果页（type=repositories）上，页面右下角的控制条会把本页仓库收集到这里，翻页会累加。</p>
+    </section>
+
+    <!-- 队列 -->
+    <section class="view" id="view-queue" hidden>
+      <div class="toolbar">
+        <button class="btn" id="btn-retry-failed">重试失败项</button>
+        <button class="btn" id="btn-clear-finished">清除已完成</button>
+        <button class="btn danger" id="btn-clear-all">全部清空</button>
+        <span class="grow"></span>
+        <button class="btn" id="btn-pump">推进队列</button>
+      </div>
+      <div class="list" id="queue-list"></div>
+      <details class="logbox" id="logbox">
+        <summary>运行日志</summary>
+        <pre id="log"></pre>
+      </details>
+    </section>
+
+    <!-- 设置 -->
+    <section class="view" id="view-settings" hidden>
+      <h3>归档</h3>
+      <label class="field"><span>总子目录（下载目录下）</span><input id="s-rootFolder" placeholder="github"></label>
+      <label class="field"><span>日期目录格式</span>
+        <select id="s-dateStyle">
+          <option value="YYYY-MM-DD">2026-10-10</option>
+          <option value="YYYYMMDD">20261010</option>
+          <option value="YYYY-MM">2026-10</option>
+          <option value="none">不分日期</option>
+        </select>
+      </label>
+      <div class="preview" id="path-preview"></div>
+      <p class="hint">扩展只能把文件写在浏览器「下载」目录之下，路径会自动创建。想落到其他盘，请在 Edge 设置里把默认下载位置改掉。</p>
+
+      <h3>下载行为</h3>
+      <label class="field"><span>并发数</span>
+        <select id="s-concurrency">
+          <option value="1">1（严格串行）</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </label>
+      <label class="field"><span>单条最大尝试次数</span><input type="number" id="s-maxAttempts" min="1" max="30"></label>
+      <label class="field"><span>无进度判卡死（秒）</span><input type="number" id="s-stallSeconds" min="20" max="600"></label>
+      <label class="field"><span>有效文件最小体积（字节）</span><input type="number" id="s-minValidBytes" min="22" max="4096"></label>
+      <label class="chk"><input type="checkbox" id="s-notify"><span>队列跑完弹系统通知</span></label>
+      <label class="chk"><input type="checkbox" id="s-overwrite"><span>重名覆盖（默认自动加 (1)）</span></label>
+      <label class="chk"><input type="checkbox" id="s-autoOnRepo"><span>进入任何仓库页自动入队（同一仓库每天最多自动一次）</span></label>
+
+      <h3>下载源与降级顺序</h3>
+      <p class="hint">每次失败自动换下一个源，并按历史实测速度重排。连续失败的源冷却 5 分钟。</p>
+      <div id="sources"></div>
+      <div class="toolbar">
+        <button class="btn" id="btn-speedtest">全部测速</button>
+        <span class="grow"></span>
+        <span class="status" id="speed-status"></span>
+      </div>
+
+      <h3>自定义镜像</h3>
+      <p class="hint">模板里 <code>{url}</code> 是完整的 github.com 归档地址，也可用 <code>{o} {r} {ref}</code>。</p>
+      <div class="toolbar">
+        <input id="cm-label" placeholder="名称，如 自建代理">
+        <input id="cm-template" placeholder="https://my.host/{url}">
+        <button class="btn" id="btn-add-mirror">添加</button>
+      </div>
+
+      <h3>快捷键</h3>
+      <p class="hint">在 <code>edge://extensions/shortcuts</code>（Chrome 为 <code>chrome://extensions/shortcuts</code>）可自定义；下表显示的是当前实际生效的绑定。</p>
+      <div class="preview" id="sc-list">读取中…</div>
+      <button class="btn" id="btn-reset">恢复默认设置</button>
+    </section>
+  </main>
+
+  <script type="module" src="./sidepanel.js"></script>
+</body>
+</html>
