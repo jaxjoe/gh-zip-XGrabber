@@ -144,7 +144,7 @@
     pill.id = 'gzg-pill';
     pill.dataset.open = '1';
     pill.innerHTML = `
-      <button class="gzg-tab" data-act="toggle" title="展开 / 收起 GitHub Zip Grabber">GZG</button>
+      <button class="gzg-tab" data-act="toggle" title="展开 / 收起 GitHub Zip XGrabber">GZG</button>
       <div class="gzg-body">
         <div class="gzg-line gzg-context"></div>
         <div class="gzg-actions"></div>
@@ -298,7 +298,7 @@
       return;
     }
 
-    ctx.innerHTML = `<strong>GitHub Zip Grabber</strong><span class="gzg-sub">非仓库/搜索页</span>`;
+    ctx.innerHTML = `<strong>GitHub Zip XGrabber</strong><span class="gzg-sub">非仓库/搜索页</span>`;
     actions.innerHTML = `<button class="gzg-btn" data-act="panel">打开队列</button>`;
   }
 

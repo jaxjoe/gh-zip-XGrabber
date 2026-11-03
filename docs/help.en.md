@@ -188,7 +188,7 @@ The **run log** at the bottom records every source switch, verification failure 
 | Date style | `YYYY-MM-DD` | `YYYYMMDD` / `YYYY-MM` / none; **local-timezone dates**, so no off-by-one at midnight |
 | Path preview | — | Live sample of the target path |
 
-> The extension can only write **inside the browser's default Downloads folder**. To land on `E:\github\...`, change Edge's default download location (Settings → Downloads → Location).
+> The extension can only write **inside the browser's default Downloads folder**. To land on `Downloads/github/...`, change Edge's default download location (Settings → Downloads → Location).
 
 ### Download behavior
 

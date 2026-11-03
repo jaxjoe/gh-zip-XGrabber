@@ -543,7 +543,7 @@ export async function refreshBadge() {
     await chrome.action.setBadgeText({ text: active ? String(active) : '' });
     await chrome.action.setBadgeBackgroundColor({ color: s.failed ? '#d1242f' : '#1f883d' });
     await chrome.action.setTitle({
-      text: `GitHub Zip Grabber — 进行中 ${s.downloading} / 待下 ${s.pending} / 完成 ${s.done}${s.failed ? ` / 失败 ${s.failed}` : ''}`
+      text: `GitHub Zip XGrabber — 进行中 ${s.downloading} / 待下 ${s.pending} / 完成 ${s.done}${s.failed ? ` / 失败 ${s.failed}` : ''}`
     });
   } catch { /* 扩展重载瞬间可能不可用 */ }
 }
@@ -564,7 +564,7 @@ async function maybeNotify(q, settings) {
     await chrome.notifications.create('gzg-batch-done', {
       type: 'basic',
       iconUrl: 'icons/icon128.png',
-      title: 'GitHub Zip Grabber 队列已跑完',
+      title: 'GitHub Zip XGrabber 队列已跑完',
       message: body
     });
   } catch { /* 通知不可用时静默 */ }

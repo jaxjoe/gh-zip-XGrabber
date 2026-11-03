@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-GitHub Zip Grabber 端到端验证（真实 Chromium，真实外网）
+GitHub Zip XGrabber 端到端验证（真实 Chromium，真实外网）
 
 Phase A 引擎（不依赖 github.com 可达，任何时候都跑）：
   A1 扩展加载 + MV3 service worker 注册
@@ -16,7 +16,7 @@ Phase B 页面集成（需要 github.com 能打开，否则整段 SKIP 并说明
   B3 多选批量入队 + 串行队列自动跑空
 
 用法：python tests/e2e_browser.py
-产物落在 E:\\git\\gzg-e2e\\downloads\\gzg-e2e\\<日期>\\ 下，便于事后核查。
+产物落在 tests/downloads/gzg-e2e/<日期>/ 下，便于事后核查。
 """
 import glob
 import json
@@ -30,7 +30,7 @@ from playwright.sync_api import sync_playwright
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXT = os.path.dirname(HERE).replace("\\", "/")
-DL = "E:\\git\\gzg-e2e\\downloads"
+DL = os.path.join(HERE, "downloads")
 TODAY = time.strftime("%Y-%m-%d")
 
 results = []
@@ -180,7 +180,7 @@ def main():
             return summarize()
         ext_id = worker_url.split("/")[2]
 
-        # 用 CDP 把下载根目录钉死到 E:\git\gzg-e2e\downloads，这样才能观察
+        # 用 CDP 把下载根目录钉死到 tests/downloads，这样才能观察
         # chrome.downloads 的相对子路径（gzg-e2e/<日期>/xxx.zip）究竟有没有被建成目录。
         try:
             cdp = ctx.new_browser_cdp_session()

@@ -1,4 +1,4 @@
-// GitHub Zip Grabber — MV3 service worker 入口
+// GitHub Zip XGrabber — MV3 service worker 入口
 // 只做三件事：注册事件、路由消息、把耗时动作交给 lib/queue.js。
 
 import { parseGitHubUrl } from './lib/naming.js';
@@ -61,14 +61,14 @@ chrome.commands.onCommand.addListener(async (command) => {
 
   const info = parseGitHubUrl(tab.url || '');
   if (info.kind !== 'repo') {
-    notify('GitHub Zip Grabber', '当前页面不是仓库页，快捷键未触发下载');
+    notify('GitHub Zip XGrabber', '当前页面不是仓库页，快捷键未触发下载');
     return;
   }
   const res = await Q.enqueue([{ owner: info.owner, repo: info.repo, ref: info.branch }], { origin: 'shortcut' });
   const text = res.added?.length
     ? `已入队 ${info.owner}/${info.repo}（${info.branch}）`
     : (res.skipped?.length ? `跳过：${res.skipped[0].reason}` : '入队失败');
-  notify('GitHub Zip Grabber', text);
+  notify('GitHub Zip XGrabber', text);
 });
 
 function notify(title, message) {

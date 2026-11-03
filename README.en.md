@@ -1,4 +1,4 @@
-# GitHub Zip Grabber
+# GitHub Zip XGrabber
 
 [简体中文](README.md) ｜ [English](README.en.md) ｜ [帮助手册 / Help](docs/help.zh-CN.md) ｜ [赞助 / Sponsor](docs/SPONSOR.md)
 

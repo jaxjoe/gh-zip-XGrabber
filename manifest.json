@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "GitHub Zip Grabber",
+  "name": "GitHub Zip XGrabber",
   "version": "0.1.2",
   "description": "GitHub 仓库页一键下载源码 zip；搜索结果多选批量排队；直连失败自动切镜像；按日期目录归档到下载文件夹",
   "permissions": ["downloads", "storage", "alarms", "notifications", "sidePanel"],
@@ -22,7 +22,7 @@
     }
   ],
   "action": {
-    "default_title": "GitHub Zip Grabber（打开侧边栏）"
+    "default_title": "GitHub Zip XGrabber（打开侧边栏）"
   },
   "side_panel": {
     "default_path": "sidepanel/sidepanel.html"

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """诊断：扩展到底有没有被 Chromium 装载（列 target + 抓 chrome://extensions 的报错文本）。"""
 import json
+import os
 import sys
 import tempfile
 import time
 
 from playwright.sync_api import sync_playwright
 
-EXT = "E:/git/gh-zip-grabber"
+EXT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace("\\", "/")
 
 with sync_playwright() as p:
     udd = tempfile.mkdtemp(prefix="gzg-boot-")
